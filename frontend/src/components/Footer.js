@@ -33,7 +33,6 @@ const Footer = () => {
             <h6 className="fw-bold text-gold mb-3">Quick Links</h6>
             <ul className="list-unstyled">
               <li className="mb-2"><Link className="text-white-50 text-decoration-none hover-white" to="/">Home</Link></li>
-              <li className="mb-2"><Link className="text-white-50 text-decoration-none hover-white" to="/about">About Us</Link></li>
               <li className="mb-2"><Link className="text-white-50 text-decoration-none hover-white" to="/participants">Participants</Link></li>
             </ul>
           </div>

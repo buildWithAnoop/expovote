@@ -53,7 +53,7 @@ describe("Navbar Authentication & Navigation", () => {
 
     // Public links
     expect(screen.getByText("Home")).toBeInTheDocument();
-    expect(screen.getByText("About")).toBeInTheDocument();
+    expect(screen.queryByText("About")).not.toBeInTheDocument();
     expect(screen.getByText("Participants")).toBeInTheDocument();
     expect(screen.queryByText("Winners")).not.toBeInTheDocument();
     expect(screen.queryByText("Contact")).not.toBeInTheDocument();
@@ -72,7 +72,7 @@ describe("Navbar Authentication & Navigation", () => {
     expect(screen.queryByLabelText("Admin Menu")).not.toBeInTheDocument();
   });
 
-  test("Renders Logout button and hides Login/Signup when authenticated as student, without Winners or Contact", () => {
+  test("Renders Logout button and hides Login/Signup when authenticated as student, without Winners, Contact, or About", () => {
     const mockLogout = jest.fn();
 
     render(
@@ -81,7 +81,8 @@ describe("Navbar Authentication & Navigation", () => {
       </AuthContext.Provider>
     );
 
-    // Winners and Contact must NOT be visible to students
+    // Winners, Contact, and About must NOT be visible to students
+    expect(screen.queryByText("About")).not.toBeInTheDocument();
     expect(screen.queryByText("Winners")).not.toBeInTheDocument();
     expect(screen.queryByText("Contact")).not.toBeInTheDocument();
 
@@ -99,7 +100,7 @@ describe("Navbar Authentication & Navigation", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/login");
   });
 
-  test("Renders Winners link, Admin avatar and dropdown when authenticated as admin", () => {
+  test("Renders Winners link, Admin avatar and dropdown when authenticated as admin, without About or Contact", () => {
     const mockLogout = jest.fn();
 
     render(
@@ -110,7 +111,8 @@ describe("Navbar Authentication & Navigation", () => {
 
     // Winners link is visible to admin
     expect(screen.getByText("Winners")).toBeInTheDocument();
-    // Contact is absent
+    // About and Contact are absent
+    expect(screen.queryByText("About")).not.toBeInTheDocument();
     expect(screen.queryByText("Contact")).not.toBeInTheDocument();
 
     // Admin trigger button

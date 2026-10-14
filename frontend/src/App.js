@@ -12,7 +12,6 @@ import Login from "./Page/Login";
 import { AuthProvider } from "./components/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminPanel from "./Page/AdminPanel";
-import About from "./Page/AboutPage";
 
 const App = () => {
   return (
@@ -26,7 +25,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/contact" element={<Navigate to="/" replace />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/about" element={<Navigate to="/" replace />} />
             <Route path="/participants" element={<Participants />} />
             <Route
               path="/winners"

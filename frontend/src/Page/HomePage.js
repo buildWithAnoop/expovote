@@ -145,7 +145,6 @@ const HomePage = () => {
                   <span><strong>Comprehensive Analytics:</strong> Detailed reports for event organizers.</span>
                 </li>
               </ul>
-              <Link to="/about" className="btn btn-outline-primary btn-lg">Learn More</Link>
             </div>
           </div>
         </div>

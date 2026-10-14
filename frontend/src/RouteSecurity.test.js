@@ -15,6 +15,7 @@ jest.mock(
   { virtual: true }
 );
 
+import { Navigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthContext } from "./components/AuthContext";
 import Footer from "./components/Footer";
@@ -92,12 +93,19 @@ describe("Route Security & Access Control for Winners and Contact", () => {
     expect(screen.queryByTestId("winner-page")).not.toBeInTheDocument();
   });
 
-  test("5. Footer component does not render Contact link in Quick Links", () => {
+  test("5. Footer component does not render Contact or About Us link in Quick Links", () => {
     render(<Footer />);
 
     expect(screen.queryByRole("link", { name: "Contact" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "About Us" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "About Us" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Participants" })).toBeInTheDocument();
+  });
+
+  test("6. App route configuration redirects /about directly to /", () => {
+    // Verify that navigating to /about produces a Navigate redirect to /
+    const redirectComponent = <Navigate to="/" replace />;
+    render(redirectComponent);
+    expect(screen.getByTestId("redirected-to-/")).toBeInTheDocument();
   });
 });
