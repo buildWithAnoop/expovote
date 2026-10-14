@@ -93,13 +93,36 @@ describe("Route Security & Access Control for Winners and Contact", () => {
     expect(screen.queryByTestId("winner-page")).not.toBeInTheDocument();
   });
 
-  test("5. Footer component does not render Contact or About Us link in Quick Links", () => {
+  test("5. Footer component renders updated branding, address, and contact details without obsolete data", () => {
     render(<Footer />);
 
+    // Quick links verify Contact and About Us are absent
     expect(screen.queryByRole("link", { name: "Contact" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "About Us" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Participants" })).toBeInTheDocument();
+
+    // Brand name: AITM Voting System
+    expect(screen.getByText("AITM Voting System")).toBeInTheDocument();
+    expect(screen.queryByText("AITM Rating System")).not.toBeInTheDocument();
+
+    // College address: Axis Institute of Technology and Management, Rooma, Kanpur
+    expect(screen.getAllByText(/Axis Institute of Technology and Management/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/Rooma, Kanpur, Uttar Pradesh 208007/)).toBeInTheDocument();
+    expect(screen.queryByText(/Savagaon Road/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Belagavi/)).not.toBeInTheDocument();
+
+    // Phone link: 1800 313 2464 (tel:18003132464)
+    const phoneLink = screen.getByRole("link", { name: "1800 313 2464" });
+    expect(phoneLink).toBeInTheDocument();
+    expect(phoneLink).toHaveAttribute("href", "tel:18003132464");
+    expect(screen.queryByText(/\+91 831 243 8100/)).not.toBeInTheDocument();
+
+    // Email link: info@axiscolleges.in (mailto:info@axiscolleges.in)
+    const emailLink = screen.getByRole("link", { name: "info@axiscolleges.in" });
+    expect(emailLink).toBeInTheDocument();
+    expect(emailLink).toHaveAttribute("href", "mailto:info@axiscolleges.in");
+    expect(screen.queryByText("info@aitm.edu.in")).not.toBeInTheDocument();
   });
 
   test("6. App route configuration redirects /about directly to /", () => {

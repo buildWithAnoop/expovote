@@ -15,10 +15,10 @@ const Footer = () => {
                 alt="AITM Logo" 
                 style={{ width: "40px", height: "40px", background: "white", borderRadius: "50%", padding: "2px" }} 
               />
-              <h5 className="fw-bold mb-0 text-white">AITM Rating System</h5>
+              <h5 className="fw-bold mb-0 text-white">AITM Voting System</h5>
             </div>
             <p className="text-white-50 small">
-              The official platform for rating and reviewing projects, events, and participants at Angadi Institute of Technology and Management. Fostering excellence through transparent evaluation.
+              The official platform for rating and reviewing projects, events, and participants at Axis Institute of Technology and Management. Fostering excellence through transparent evaluation.
             </p>
             <div className="d-flex gap-3 mt-3">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-white social-icon-hover"><FaFacebookF /></a>
@@ -53,16 +53,16 @@ const Footer = () => {
             <h6 className="fw-bold text-gold mb-3">Contact Us</h6>
             <ul className="list-unstyled text-white-50">
               <li className="mb-3 d-flex gap-2">
-                <FaMapMarkerAlt className="mt-1 text-gold" />
-                <span>Angadi Institute of Technology and Management,<br />Savagaon Road, Belagavi, Karnataka 590009</span>
+                <FaMapMarkerAlt className="mt-1 text-gold flex-shrink-0" />
+                <span>Axis Institute of Technology and Management<br />Rooma, Kanpur, Uttar Pradesh 208007</span>
               </li>
               <li className="mb-3 d-flex gap-2">
-                <FaPhoneAlt className="mt-1 text-gold" />
-                <a href="tel:+911234567890" className="text-white-50 text-decoration-none hover-white">+91 831 243 8100</a>
+                <FaPhoneAlt className="mt-1 text-gold flex-shrink-0" />
+                <a href="tel:18003132464" className="text-white-50 text-decoration-none hover-white">1800 313 2464</a>
               </li>
               <li className="mb-3 d-flex gap-2">
-                <FaEnvelope className="mt-1 text-gold" />
-                <a href="mailto:info@aitm.edu.in" className="text-white-50 text-decoration-none hover-white">info@aitm.edu.in</a>
+                <FaEnvelope className="mt-1 text-gold flex-shrink-0" />
+                <a href="mailto:info@axiscolleges.in" className="text-white-50 text-decoration-none hover-white">info@axiscolleges.in</a>
               </li>
             </ul>
           </div>
@@ -72,7 +72,7 @@ const Footer = () => {
 
         <div className="row align-items-center">
           <div className="col-md-6 text-center text-md-start">
-            <p className="mb-0 text-white-50 small">&copy; {new Date().getFullYear()} AITM Rating System. All rights reserved.</p>
+            <p className="mb-0 text-white-50 small">&copy; {new Date().getFullYear()} AITM Voting System. All rights reserved.</p>
           </div>
           <div className="col-md-6 text-center text-md-end">
             <p className="mb-0 text-white-50 small">Designed & Developed by RPWS Team</p>
