@@ -260,6 +260,7 @@ app.post("/addParticipants", uploadLimiter, authMiddleware, handleUpload, async 
 });
 
 // Get all participants (with rate limiting, server-enforced pagination max limit 50 & lightweight image URLs)
+// Sensitive vote totals are omitted for public browsing to protect election secrecy
 app.get("/allParticipants", readLimiter, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -276,7 +277,6 @@ app.get("/allParticipants", readLimiter, async (req, res) => {
         image: 1,
         description: 1,
         teamNo: 1,
-        votes: 1,
         createdAt: 1,
       }
     )
@@ -307,8 +307,8 @@ app.get("/allParticipants", readLimiter, async (req, res) => {
   }
 });
 
-// Get participants sorted by votes desc (Leaderboard with rate limiting, projection optimization & max limit 50)
-app.get("/allParticipantsByVotes", readLimiter, async (req, res) => {
+// Get participants sorted by votes desc (Leaderboard / Winner results - Admin only with rate limiting)
+app.get("/allParticipantsByVotes", readLimiter, authMiddleware, adminOnly, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = Math.min(Math.max(parseInt(req.query.limit) || 6, 1), 50);

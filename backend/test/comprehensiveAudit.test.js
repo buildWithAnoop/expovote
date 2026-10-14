@@ -665,14 +665,38 @@ describe("9. Participant management", () => {
     const clampRes = await request(app).get("/allParticipants?page=1&limit=1000");
     expect(clampRes.status).toBe(200);
     expect(clampRes.body.meta.limit).toBe(50);
+
+    // Verify sensitive vote totals are omitted from public participant browsing
+    res.body.data.forEach((p) => {
+      expect(p.votes).toBeUndefined();
+    });
   });
 });
 
 // =========================================================================
-// 10. Leaderboard accuracy
+// 10. Leaderboard accuracy & Access Control
 // =========================================================================
-describe("10. Leaderboard accuracy", () => {
+describe("10. Leaderboard accuracy & Access Control", () => {
+  let adminToken;
+  let studentToken;
+
   beforeEach(async () => {
+    const admin = await User.create({
+      name: "Admin Leaderboard",
+      email: `admin.lb.${Date.now()}.${Math.random()}@aitm.edu.in`,
+      password: "password123",
+      role: "admin",
+    });
+    adminToken = jwt.sign({ id: admin._id.toString(), role: "admin" }, getJwtSecret());
+
+    const student = await User.create({
+      name: "Student Leaderboard",
+      email: `student.lb.${Date.now()}.${Math.random()}@aitm.edu.in`,
+      password: "password123",
+      role: "student",
+    });
+    studentToken = jwt.sign({ id: student._id.toString(), role: "student" }, getJwtSecret());
+
     await ParticipantsModel.create([
       { name: "Low Score Project", department: "ME", votes: 5 },
       { name: "Top Score Project", department: "CSE", votes: 45 },
@@ -682,8 +706,24 @@ describe("10. Leaderboard accuracy", () => {
     ]);
   });
 
-  test("GET /allParticipantsByVotes returns participants sorted strictly by votes descending", async () => {
+  test("GET /allParticipantsByVotes rejects unauthenticated requests with HTTP 401", async () => {
     const res = await request(app).get("/allParticipantsByVotes?page=1&limit=10");
+    expect(res.status).toBe(401);
+    expect(res.body.error).toMatch(/No token provided|invalid/i);
+  });
+
+  test("GET /allParticipantsByVotes rejects student requests with HTTP 403 Forbidden", async () => {
+    const res = await request(app)
+      .get("/allParticipantsByVotes?page=1&limit=10")
+      .set("Authorization", `Bearer ${studentToken}`);
+    expect(res.status).toBe(403);
+    expect(res.body.error).toMatch(/Administrator privileges required/i);
+  });
+
+  test("GET /allParticipantsByVotes returns participants sorted strictly by votes descending for admin", async () => {
+    const res = await request(app)
+      .get("/allParticipantsByVotes?page=1&limit=10")
+      .set("Authorization", `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
     expect(res.body.data.length).toBe(5);
 
@@ -696,7 +736,9 @@ describe("10. Leaderboard accuracy", () => {
   });
 
   test("Leaderboard projection omits heavy unneeded fields", async () => {
-    const res = await request(app).get("/allParticipantsByVotes?page=1&limit=5");
+    const res = await request(app)
+      .get("/allParticipantsByVotes?page=1&limit=5")
+      .set("Authorization", `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
 
     res.body.data.forEach((p) => {
@@ -710,17 +752,52 @@ describe("10. Leaderboard accuracy", () => {
 });
 
 // =========================================================================
-// 11. Winner page data
+// 11. Winner page data & Access Control
 // =========================================================================
-describe("11. Winner page data", () => {
-  test("Provides correct contract structure for frontend WinnerPage rendering", async () => {
+describe("11. Winner page data & Access Control", () => {
+  let adminToken;
+  let studentToken;
+
+  beforeEach(async () => {
+    const admin = await User.create({
+      name: "Admin Winners",
+      email: `admin.win.${Date.now()}.${Math.random()}@aitm.edu.in`,
+      password: "password123",
+      role: "admin",
+    });
+    adminToken = jwt.sign({ id: admin._id.toString(), role: "admin" }, getJwtSecret());
+
+    const student = await User.create({
+      name: "Student Winners",
+      email: `student.win.${Date.now()}.${Math.random()}@aitm.edu.in`,
+      password: "password123",
+      role: "student",
+    });
+    studentToken = jwt.sign({ id: student._id.toString(), role: "student" }, getJwtSecret());
+  });
+
+  test("Rejects unauthenticated requests for winner data with HTTP 401", async () => {
+    const res = await request(app).get("/allParticipantsByVotes?page=1&limit=6");
+    expect(res.status).toBe(401);
+  });
+
+  test("Rejects student requests for winner data with HTTP 403 Forbidden", async () => {
+    const res = await request(app)
+      .get("/allParticipantsByVotes?page=1&limit=6")
+      .set("Authorization", `Bearer ${studentToken}`);
+    expect(res.status).toBe(403);
+  });
+
+  test("Provides correct contract structure for frontend WinnerPage rendering for admin", async () => {
     await ParticipantsModel.create([
       { name: "1st Place Winner", department: "CSE", votes: 100 },
       { name: "2nd Place Winner", department: "ECE", votes: 80 },
       { name: "3rd Place Winner", department: "ME", votes: 60 },
     ]);
 
-    const res = await request(app).get("/allParticipantsByVotes?page=1&limit=6");
+    const res = await request(app)
+      .get("/allParticipantsByVotes?page=1&limit=6")
+      .set("Authorization", `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
     expect(res.body.data).toBeDefined();
     expect(Array.isArray(res.body.data)).toBe(true);
@@ -740,12 +817,14 @@ describe("11. Winner page data", () => {
     expect(progressValues[2]).toBe(60);
   });
 
-  test("Gracefully handles zero-vote scenarios without NaN in data", async () => {
+  test("Gracefully handles zero-vote scenarios without NaN in data for admin", async () => {
     await ParticipantsModel.create([
       { name: "Zero Vote Winner", department: "CSE", votes: 0 },
     ]);
 
-    const res = await request(app).get("/allParticipantsByVotes?page=1&limit=6");
+    const res = await request(app)
+      .get("/allParticipantsByVotes?page=1&limit=6")
+      .set("Authorization", `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
     expect(res.body.data[0].votes).toBe(0);
   });

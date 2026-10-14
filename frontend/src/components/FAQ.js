@@ -30,7 +30,7 @@ const faqs = [
     id: 5,
     question: "Who can I contact for support?",
     answer:
-      "You can reach out to the student coordinators or use the Contact form on our website for any queries.",
+      "You can reach out to the student coordinators or faculty event coordinators for any queries.",
   },
 ];
 

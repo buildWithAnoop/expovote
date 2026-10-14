@@ -141,6 +141,44 @@ describe("WinnerPage Component - Zero-Vote & Empty-Data Handlers", () => {
     expect(screen.queryByText("No winners or votes recorded yet.")).not.toBeInTheDocument();
   });
 
+  test("4b. HTTP 403 Forbidden renders access-denied message requiring administrator privileges", () => {
+    const error403 = new Error("Forbidden");
+    error403.response = { status: 403, data: { error: "Access denied" } };
+
+    mockSwrState = {
+      data: null,
+      error: error403,
+      size: 1,
+      setSize: jest.fn(),
+      isLoading: false,
+    };
+
+    render(<WinnersPage />);
+
+    expect(
+      screen.getByText("Access denied: Administrator privileges required to view winner results.")
+    ).toBeInTheDocument();
+  });
+
+  test("4c. HTTP 401 Unauthorized renders session expired / authentication required alert", () => {
+    const error401 = new Error("Unauthorized");
+    error401.response = { status: 401, data: { error: "No token provided" } };
+
+    mockSwrState = {
+      data: null,
+      error: error401,
+      size: 1,
+      setSize: jest.fn(),
+      isLoading: false,
+    };
+
+    render(<WinnersPage />);
+
+    expect(
+      screen.getByText("Session expired or authentication required. Please log in as an administrator.")
+    ).toBeInTheDocument();
+  });
+
   test("5. Existing winner display and medal podium styling remain functional", () => {
     mockSwrState = {
       data: [

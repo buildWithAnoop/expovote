@@ -22,7 +22,14 @@ const Login = () => {
       const { data } = await axios.post(`${API_URL}/login`, formData);
       login(data.token);
       toast.success("Login successful!");
-      setTimeout(() => navigate("/winners"), 1000);
+      const role = data.user?.role;
+      setTimeout(() => {
+        if (role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/participants");
+        }
+      }, 1000);
     } catch (err) {
       toast.error(err.response?.data?.error || "Network error");
     } finally {

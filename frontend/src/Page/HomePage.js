@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { AuthContext } from "../components/AuthContext";
+import { jwtDecode } from "jwt-decode";
 import Announcements from "../components/Announcements";
 import EventTimeline from "../components/EventTimeline";
 import FAQ from "../components/FAQ";
 import Gallery from "../components/Gallery";
 
 const HomePage = () => {
+  const { token } = useContext(AuthContext);
+  let userRole = null;
+  if (token) {
+    try {
+      userRole = jwtDecode(token).role;
+    } catch (_) {}
+  }
   return (
     <div className="bg-light">
       {/* HERO SECTION */}
@@ -160,12 +169,14 @@ const HomePage = () => {
             Join the digital revolution at AITM. Register your event or participate in ongoing activities today.
           </p>
           <div className="d-flex justify-content-center gap-3">
-            <Link to="/contact" className="btn btn-light btn-lg px-5 fw-bold text-primary shadow-lg">
-              Contact Admin
+            <Link to="/participants" className="btn btn-light btn-lg px-5 fw-bold text-primary shadow-lg">
+              Explore Participants
             </Link>
-            <Link to="/winners" className="btn btn-outline-light btn-lg px-5 fw-bold">
-              View Winners
-            </Link>
+            {token && userRole === "admin" && (
+              <Link to="/winners" className="btn btn-outline-light btn-lg px-5 fw-bold">
+                View Winners
+              </Link>
+            )}
           </div>
         </div>
       </section>

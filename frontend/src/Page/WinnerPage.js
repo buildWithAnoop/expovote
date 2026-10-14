@@ -29,7 +29,14 @@ const sidebarExpandedWidth = 150;
 
 const WinnersPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const fetcher = (url) => axios.get(url).then((res) => res.data);
+  const fetcher = (url) => {
+    const token = localStorage.getItem("token");
+    return axios
+      .get(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      .then((res) => res.data);
+  };
 
   const getKey = (pageIndex, previousPageData) => {
     if (previousPageData && !previousPageData.data.length) return null;
@@ -138,7 +145,11 @@ const WinnersPage = () => {
         ) : error ? (
           <Box textAlign="center" mt={4} mb={4}>
             <Alert severity="error" sx={{ maxWidth: 500, mx: "auto" }}>
-              Failed to load winners. Please try again later.
+              {error.response?.status === 403
+                ? "Access denied: Administrator privileges required to view winner results."
+                : error.response?.status === 401
+                ? "Session expired or authentication required. Please log in as an administrator."
+                : "Failed to load winners. Please try again later."}
             </Alert>
           </Box>
         ) : winnersData.length === 0 ? (

@@ -104,17 +104,13 @@ const Navbar = () => {
               </Link>
             </li>
 
-            <li className="nav-item">
-              <Link className="nav-link" to="/winners">
-                Winners
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link className="nav-link" to="/contact">
-                Contact
-              </Link>
-            </li>
+            {token && userRole === "admin" && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/winners">
+                  Winners
+                </Link>
+              </li>
+            )}
 
             {/* Unauthenticated: Login & Sign Up buttons */}
             {!token && (

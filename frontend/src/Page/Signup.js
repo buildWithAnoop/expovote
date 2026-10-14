@@ -17,6 +17,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import HomeIcon from "@mui/icons-material/Home";
+import { jwtDecode } from "jwt-decode";
 import API_URL from "../api";
 const sidebarCollapsedWidth = 50;
 const sidebarExpandedWidth = 150;
@@ -69,9 +70,19 @@ const Signup = () => {
     }
   };
 
+  const { token } = useContext(AuthContext);
+  let userRole = null;
+  if (token) {
+    try {
+      userRole = jwtDecode(token).role;
+    } catch (_) {}
+  }
+
   const sidebarItems = [
     { text: "Register", icon: <PersonAddIcon />, link: "/register" },
-    { text: "Winners", icon: <EmojiEventsIcon />, link: "/winners" },
+    ...(userRole === "admin"
+      ? [{ text: "Winners", icon: <EmojiEventsIcon />, link: "/winners" }]
+      : []),
     { text: "Signup", icon: <AppRegistrationIcon />, link: "/signup" },
   ];
 
