@@ -24,8 +24,9 @@ import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import HomeIcon from "@mui/icons-material/Home";
 import { Link } from "react-router-dom";
 import API_URL from "../api";
-const sidebarCollapsedWidth = 50;
-const sidebarExpandedWidth = 150;
+
+const sidebarCollapsedWidth = 56;
+const sidebarExpandedWidth = 160;
 
 const WinnersPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -48,16 +49,20 @@ const WinnersPage = () => {
     revalidateOnFocus: false,
   });
 
-  const winnersData = data ? data.flatMap((page) => {
-    if (Array.isArray(page)) return page;
-    return page.data || [];
-  }) : [];
+  const winnersData = data
+    ? data.flatMap((page) => {
+        if (Array.isArray(page)) return page;
+        return page.data || [];
+      })
+    : [];
 
   const maxVotes = winnersData[0]?.votes || 0;
 
-  const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
+  const isLoadingMore =
+    isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
   const isEmpty = data?.[0]?.data?.length === 0;
-  const isReachingEnd = isEmpty || (data && data[data.length - 1]?.data?.length < 6);
+  const isReachingEnd =
+    isEmpty || (data && data[data.length - 1]?.data?.length < 6);
 
   const sidebarItems = [
     { text: "Register", icon: <PersonAddIcon />, link: "/register" },
@@ -66,7 +71,7 @@ const WinnersPage = () => {
   ];
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", backgroundColor: "var(--gandhi-cream)", minHeight: "85vh" }}>
       {/* Sidebar */}
       <Drawer
         variant="permanent"
@@ -77,20 +82,37 @@ const WinnersPage = () => {
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
             width: sidebarOpen ? sidebarExpandedWidth : sidebarCollapsedWidth,
-            bgcolor: "rgba(255,255,255,0.1)",
-            color: "#000",
-            backdropFilter: "blur(10px)",
+            bgcolor: "var(--gandhi-ivory)",
+            color: "var(--gandhi-brown)",
+            borderRight: "1px solid var(--gandhi-border)",
             overflowX: "hidden",
-            borderRight: "1px solid rgba(0,0,0,0.1)",
-            transition: "width 0.3s",
+            transition: "width 0.3s ease",
+            boxShadow: "2px 0 10px rgba(56, 34, 19, 0.05)",
           },
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 3, mb: 2 }}>
-          <HomeIcon fontSize="large" />
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 3, mb: 1 }}>
+          <Box
+            sx={{
+              p: 1,
+              borderRadius: "50%",
+              bgcolor: "var(--gandhi-terracotta-light)",
+              color: "var(--gandhi-terracotta)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <HomeIcon fontSize="medium" />
+          </Box>
           {sidebarOpen && (
-            <Typography variant="h6" mt={1} fontWeight="bold">
-              Admin Panel
+            <Typography
+              variant="subtitle2"
+              mt={1}
+              fontWeight="bold"
+              sx={{ color: "var(--gandhi-brown)", letterSpacing: "0.5px" }}
+            >
+              Gandhigiri Portal
             </Typography>
           )}
         </Box>
@@ -103,17 +125,22 @@ const WinnersPage = () => {
                 sx={{
                   borderRadius: 2,
                   mx: 1,
-                  transition: "0.3s",
-                  color: "#000",
+                  transition: "0.25s",
+                  color: "var(--gandhi-brown)",
                   "&:hover": {
-                    bgcolor: "rgba(0,0,0,0.05)",
-                    transform: "scale(1.05)",
-                    color: "#1976d2",
+                    bgcolor: "var(--gandhi-terracotta-light)",
+                    transform: "translateX(2px)",
+                    color: "var(--gandhi-terracotta)",
                   },
                 }}
               >
                 {item.icon}
-                {sidebarOpen && <ListItemText primary={item.text} sx={{ ml: 2 }} />}
+                {sidebarOpen && (
+                  <ListItemText
+                    primary={item.text}
+                    sx={{ ml: 2, "& .MuiTypography-root": { fontWeight: 600, fontSize: "0.9rem" } }}
+                  />
+                )}
               </ListItemButton>
             </ListItem>
           ))}
@@ -123,28 +150,52 @@ const WinnersPage = () => {
       {/* Main Content */}
       <Container
         sx={{
-          py: 4,
-          ml: sidebarCollapsedWidth,
+          py: 5,
+          ml: `${sidebarCollapsedWidth}px`,
           width: `calc(100% - ${sidebarCollapsedWidth}px)`,
         }}
       >
-        <Typography
-          variant="h4"
-          align="center"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ color: "primary.main", mb: 4 }}
-        >
-          🏆 Event Winners
-        </Typography>
+        <Box textAlign="center" mb={4}>
+          <div
+            className="d-inline-flex align-items-center gap-2 px-3 py-1 mb-2 rounded-pill"
+            style={{
+              backgroundColor: "var(--gandhi-gold-light)",
+              border: "1px solid rgba(198, 146, 20, 0.3)",
+            }}
+          >
+            <span style={{ fontSize: "0.85rem", fontWeight: "bold", color: "var(--gandhi-gold-hover)" }}>
+              Admin Official Leaderboard &bull; Gandhigiri 2026
+            </span>
+          </div>
+          <Typography
+            variant="h4"
+            align="center"
+            fontWeight="bold"
+            gutterBottom
+            sx={{ color: "var(--gandhi-brown)", letterSpacing: "-0.5px" }}
+          >
+            🏆 Event Winners
+          </Typography>
+          <Typography variant="body2" sx={{ color: "var(--gandhi-text-muted)" }}>
+            Live ranking based on authenticated student votes
+          </Typography>
+        </Box>
 
         {isLoading && winnersData.length === 0 ? (
           <Box textAlign="center" mt={6}>
-            <CircularProgress />
+            <CircularProgress sx={{ color: "var(--gandhi-terracotta)" }} />
           </Box>
         ) : error ? (
           <Box textAlign="center" mt={4} mb={4}>
-            <Alert severity="error" sx={{ maxWidth: 500, mx: "auto" }}>
+            <Alert
+              severity="error"
+              sx={{
+                maxWidth: 550,
+                mx: "auto",
+                borderRadius: "12px",
+                border: "1px solid rgba(211, 47, 47, 0.2)",
+              }}
+            >
               {error.response?.status === 403
                 ? "Access denied: Administrator privileges required to view winner results."
                 : error.response?.status === 401
@@ -153,16 +204,58 @@ const WinnersPage = () => {
             </Alert>
           </Box>
         ) : winnersData.length === 0 ? (
-          <Box textAlign="center" mt={6} p={4} bgcolor="rgba(0,0,0,0.02)" borderRadius={3}>
-            <Typography variant="h6" color="text.secondary">
+          <Box
+            textAlign="center"
+            mt={6}
+            p={5}
+            bgcolor="var(--gandhi-ivory)"
+            borderRadius="16px"
+            border="1px solid var(--gandhi-border)"
+            boxShadow="0 4px 12px rgba(56, 34, 19, 0.05)"
+            maxWidth={500}
+            mx="auto"
+          >
+            <Typography variant="h6" sx={{ color: "var(--gandhi-text-muted)" }}>
               No winners or votes recorded yet.
             </Typography>
           </Box>
         ) : (
-          <Grid container spacing={2} direction="column" alignItems="center">
+          <Grid container spacing={2.5} direction="column" alignItems="center">
             {winnersData.map((winner, index) => {
               const rawProgress = maxVotes > 0 ? (winner.votes / maxVotes) * 100 : 0;
-              const progressValue = Math.min(100, Math.max(0, Number.isFinite(rawProgress) ? rawProgress : 0));
+              const progressValue = Math.min(
+                100,
+                Math.max(0, Number.isFinite(rawProgress) ? rawProgress : 0)
+              );
+
+              // Gandhigiri Podium Styling
+              const isGold = index === 0;
+              const isSilver = index === 1;
+              const isBronze = index === 2;
+
+              const cardBg = isGold
+                ? "#FFFDF0"
+                : isSilver
+                ? "#F9FAFB"
+                : isBronze
+                ? "#FDF8F5"
+                : "var(--gandhi-ivory)";
+
+              const cardBorder = isGold
+                ? "2px solid #C69214"
+                : isSilver
+                ? "1.5px solid #9E9E9E"
+                : isBronze
+                ? "1.5px solid #D85A2A"
+                : "1px solid var(--gandhi-border)";
+
+              const medalBadge = isGold
+                ? "🥇"
+                : isSilver
+                ? "🥈"
+                : isBronze
+                ? "🥉"
+                : `#${index + 1}`;
 
               return (
                 <Tooltip key={winner._id} title={`${winner.name} - ${winner.votes} votes`} arrow>
@@ -171,40 +264,94 @@ const WinnersPage = () => {
                       display: "flex",
                       alignItems: "center",
                       width: "100%",
-                      maxWidth: 600,
-                      bgcolor:
-                        index === 0
-                          ? "#FFD700"
-                          : index === 1
-                          ? "#C0C0C0"
-                          : index === 2
-                          ? "#CD7F32"
-                          : "#f5f5f5",
-                      borderRadius: 2,
-                      p: 2,
-                      mb: 1,
-                      boxShadow: 1,
-                      transition: "transform 0.2s",
-                      "&:hover": { transform: "scale(1.02)" },
+                      maxWidth: 680,
+                      bgcolor: cardBg,
+                      border: cardBorder,
+                      borderRadius: "14px",
+                      p: 2.5,
+                      boxShadow: isGold
+                        ? "0 6px 20px rgba(198, 146, 20, 0.2)"
+                        : "0 4px 14px rgba(56, 34, 19, 0.06)",
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      "&:hover": {
+                        transform: "translateY(-3px)",
+                        boxShadow: "0 8px 24px rgba(56, 34, 19, 0.12)",
+                      },
                     }}
                   >
+                    <Box
+                      sx={{
+                        fontSize: isGold || isSilver || isBronze ? "1.6rem" : "1.1rem",
+                        fontWeight: "bold",
+                        width: 36,
+                        textAlign: "center",
+                        mr: 1.5,
+                        color: "var(--gandhi-brown)",
+                      }}
+                    >
+                      {medalBadge}
+                    </Box>
+
                     <Avatar
                       alt={winner.name}
                       src={winner.image}
-                      sx={{ width: 50, height: 50, mr: 2 }}
+                      sx={{
+                        width: 54,
+                        height: 54,
+                        mr: 2,
+                        border: isGold ? "2px solid #C69214" : "2px solid var(--gandhi-border)",
+                      }}
                     />
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography variant="subtitle1" fontWeight="bold">
+
+                    <Box sx={{ flexGrow: 1, mr: 2 }}>
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight="bold"
+                        sx={{ color: "var(--gandhi-brown)", lineHeight: 1.3 }}
+                      >
                         {index + 1}. {winner.name} ({winner.department})
                       </Typography>
+
                       <LinearProgress
                         variant="determinate"
                         value={progressValue}
-                        sx={{ height: 10, borderRadius: 5, mt: 1 }}
-                        color={index === 0 ? "warning" : index === 1 ? "info" : "primary"}
+                        sx={{
+                          height: 10,
+                          borderRadius: 5,
+                          mt: 1.2,
+                          bgcolor: "rgba(56, 34, 19, 0.08)",
+                          "& .MuiLinearProgress-bar": {
+                            borderRadius: 5,
+                            background: isGold
+                              ? "linear-gradient(90deg, #C69214 0%, #E5A91A 100%)"
+                              : isSilver
+                              ? "linear-gradient(90deg, #78909C 0%, #B0BEC5 100%)"
+                              : "linear-gradient(90deg, #D85A2A 0%, #E26A20 100%)",
+                          },
+                        }}
                       />
                     </Box>
-                    <Typography sx={{ ml: 2, fontWeight: "bold" }}>{winner.votes} votes</Typography>
+
+                    <Box
+                      sx={{
+                        px: 1.8,
+                        py: 0.8,
+                        borderRadius: "8px",
+                        bgcolor: isGold ? "var(--gandhi-gold-light)" : "var(--gandhi-cream)",
+                        border: "1px solid var(--gandhi-border)",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontWeight: "bold",
+                          fontSize: "0.95rem",
+                          color: "var(--gandhi-brown)",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {winner.votes} votes
+                      </Typography>
+                    </Box>
                   </Box>
                 </Tooltip>
               );
@@ -214,12 +361,24 @@ const WinnersPage = () => {
 
         {/* Load More Button */}
         {winnersData.length > 0 && !isReachingEnd && (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
             <Button
               variant="contained"
               onClick={() => setSize(size + 1)}
               disabled={isLoadingMore}
-              sx={{ fontWeight: "bold", px: 4, py: 1.5 }}
+              sx={{
+                fontWeight: "bold",
+                px: 5,
+                py: 1.3,
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, var(--gandhi-brown) 0%, var(--gandhi-brown-light) 100%)",
+                color: "#ffffff",
+                boxShadow: "0 4px 14px rgba(56, 34, 19, 0.2)",
+                textTransform: "none",
+                "&:hover": {
+                  background: "linear-gradient(135deg, var(--gandhi-brown-dark) 0%, var(--gandhi-brown) 100%)",
+                },
+              }}
             >
               {isLoadingMore ? "Loading..." : "Load More"}
             </Button>

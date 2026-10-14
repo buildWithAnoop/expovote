@@ -20,6 +20,8 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkIcon from "@mui/icons-material/Link";
+import HowToVoteIcon from "@mui/icons-material/HowToVote";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import API_URL from "../api";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
@@ -51,11 +53,12 @@ const LazyImage = ({ src, alt }) => {
       loading="lazy"
       sx={{
         width: "100%",
-        height: 150,
+        height: 160,
         objectFit: "cover",
-        borderRadius: 2,
+        borderRadius: "12px",
         mb: 2,
-        background: "#e0e0e0",
+        background: "var(--gandhi-cream)",
+        border: "1px solid var(--gandhi-border)",
         filter: inView ? "blur(0px)" : "blur(10px)",
         transition: "filter 0.4s ease-out",
       }}
@@ -63,46 +66,63 @@ const LazyImage = ({ src, alt }) => {
   );
 };
 
-// ---- Memoized Card ----
+// ---- Memoized Card with Gandhigiri 2026 Theme ----
 const ParticipantCard = memo(({ participant, voted, onVote }) => (
   <Grid item xs={12} sm={6} md={4}>
     <Paper
-      elevation={10}
+      elevation={3}
       sx={{
-        width: 300,
-        height: 500,
-        p: 2,
-        borderRadius: 4,
+        width: "100%",
+        maxWidth: 320,
+        height: 520,
+        p: 2.5,
+        borderRadius: "16px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        transition: "0.25s",
-        "&:hover": { transform: "translateY(-8px)", boxShadow: 8 },
+        bgcolor: "var(--gandhi-ivory)",
+        border: "1px solid var(--gandhi-border)",
+        transition: "all 0.25s ease",
+        mx: "auto",
+        "&:hover": {
+          transform: "translateY(-6px)",
+          boxShadow: "0 12px 28px rgba(56, 34, 19, 0.12)",
+          borderColor: "rgba(216, 90, 42, 0.4)",
+        },
       }}
     >
+      {/* Team / Participant Name Badge */}
       <Box
         sx={{
           py: 1,
-          mb: 1,
+          px: 1.5,
+          mb: 1.5,
           textAlign: "center",
           fontWeight: "bold",
-          fontSize: 18,
-          color: "#fff",
-          background: "linear-gradient(90deg, #4b6cb7, #182848)",
-          borderRadius: 2,
+          fontSize: "1.05rem",
+          color: "#ffffff",
+          background: "linear-gradient(135deg, var(--gandhi-brown) 0%, var(--gandhi-brown-light) 100%)",
+          borderRadius: "10px",
+          letterSpacing: "0.5px",
+          boxShadow: "0 2px 6px rgba(56, 34, 19, 0.2)",
         }}
       >
         {participant.name}
       </Box>
 
+      {/* Project Name or Department */}
       {(participant.projectName || participant.department) && (
         <Box
           sx={{
-            py: 0.5,
-            fontWeight: "bold",
+            py: 0.6,
+            px: 1.5,
+            fontWeight: "600",
+            fontSize: "0.85rem",
             textAlign: "center",
-            background: "#c3cfe2",
-            borderRadius: 2,
+            background: "var(--gandhi-terracotta-light)",
+            color: "var(--gandhi-terracotta)",
+            border: "1px solid rgba(216, 90, 42, 0.2)",
+            borderRadius: "8px",
             mb: 1,
           }}
         >
@@ -111,45 +131,96 @@ const ParticipantCard = memo(({ participant, voted, onVote }) => (
       )}
 
       {participant.email && (
-        <Typography align="center" sx={{ fontWeight: "bold", mb: 1 }}>
+        <Typography
+          align="center"
+          sx={{
+            fontWeight: "500",
+            fontSize: "0.8rem",
+            color: "var(--gandhi-text-muted)",
+            mb: 1,
+          }}
+        >
           {participant.email}
         </Typography>
       )}
 
       <LazyImage src={participant.image} alt={participant.name} />
 
-      <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
-        <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: "bold" }}>
-          Team: {participant.teamNo || "-"}
-        </Typography>
+      {/* Project Description Container */}
+      <Box sx={{ flexGrow: 1, overflowY: "auto", pr: 0.5 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.5 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: "700",
+              color: "var(--gandhi-brown)",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
+            Team #{participant.teamNo || "-"}
+          </Typography>
+        </Box>
 
         <Typography
           variant="body2"
           sx={{
-            border: "1px dashed #4b6cb7",
-            p: 1,
-            borderRadius: 2,
-            background: "#fff",
-            mt: 1,
+            border: "1px dashed rgba(216, 90, 42, 0.3)",
+            p: 1.5,
+            borderRadius: "10px",
+            background: "var(--gandhi-cream)",
+            color: "var(--gandhi-text-dark)",
+            fontSize: "0.82rem",
+            lineHeight: 1.5,
           }}
         >
           {participant.description}
         </Typography>
       </Box>
 
+      {/* Vote Action */}
       {!voted ? (
         <Button
           variant="contained"
           fullWidth
-          sx={{ mt: 2, fontWeight: "bold" }}
+          startIcon={<HowToVoteIcon />}
+          sx={{
+            mt: 2,
+            py: 1.2,
+            borderRadius: "10px",
+            background: "linear-gradient(135deg, var(--gandhi-terracotta) 0%, var(--gandhi-saffron) 100%)",
+            color: "#ffffff",
+            fontWeight: "bold",
+            fontSize: "0.95rem",
+            textTransform: "none",
+            boxShadow: "0 4px 12px rgba(216, 90, 42, 0.25)",
+            "&:hover": {
+              background: "linear-gradient(135deg, var(--gandhi-terracotta-hover) 0%, var(--gandhi-terracotta) 100%)",
+            },
+          }}
           onClick={() => onVote(participant._id)}
         >
           Vote
         </Button>
       ) : (
-        <Typography align="center" color="green" mt={2}>
-          ✅ You have voted
-        </Typography>
+        <Box
+          sx={{
+            mt: 2,
+            py: 1,
+            borderRadius: "10px",
+            bgcolor: "rgba(46, 125, 50, 0.1)",
+            border: "1px solid rgba(46, 125, 50, 0.2)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 1,
+          }}
+        >
+          <CheckCircleIcon sx={{ color: "#2E7D32", fontSize: "1.1rem" }} />
+          <Typography sx={{ color: "#2E7D32", fontWeight: "bold", fontSize: "0.9rem" }}>
+            You have voted
+          </Typography>
+        </Box>
       )}
     </Paper>
   </Grid>
@@ -165,7 +236,7 @@ const ParticipantsPage = () => {
 
   // ---- SWR Infinite for Pagination ----
   const getKey = (pageIndex, previousPageData) => {
-    if (previousPageData && !previousPageData.data.length) return null; // reached the end
+    if (previousPageData && !previousPageData.data.length) return null;
     return `${API_URL}/allParticipants?page=${pageIndex + 1}&limit=6`;
   };
 
@@ -178,14 +249,17 @@ const ParticipantsPage = () => {
     }
   );
 
-  const allParticipants = data ? data.flatMap((page) => {
-    // Handle both new pagination format { data: [...] } and old array format [...]
-    if (Array.isArray(page)) return page;
-    return page.data || [];
-  }) : [];
-  const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
+  const allParticipants = data
+    ? data.flatMap((page) => {
+        if (Array.isArray(page)) return page;
+        return page.data || [];
+      })
+    : [];
+  const isLoadingMore =
+    isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
   const isEmpty = data?.[0]?.data?.length === 0;
-  const isReachingEnd = isEmpty || (data && data[data.length - 1]?.data?.length < 6);
+  const isReachingEnd =
+    isEmpty || (data && data[data.length - 1]?.data?.length < 6);
 
   const loading = isLoading && !data;
 
@@ -223,7 +297,7 @@ const ParticipantsPage = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        mutate(); // refresh from server
+        mutate();
         if (res.data?.alreadyVoted) {
           setSnackbar({
             open: true,
@@ -276,78 +350,153 @@ const ParticipantsPage = () => {
   const guestVotes = useMemo(() => getGuestVotes(), []);
 
   return (
-    <Container sx={{ py: 6 }}>
-      <Typography variant="h4" align="center" fontWeight="bold" sx={{ mb: 4 }}>
-        🏅 Participants of the Event
-      </Typography>
-
-      <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
-        <Button variant="outlined" startIcon={<ShareIcon />} onClick={handleShareClick}>
-          Share Participants
-        </Button>
-
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleShareClose(null)}>
-          <MenuItem onClick={() => handleShareClose("whatsapp")}>
-            <WhatsAppIcon sx={{ mr: 1 }} /> WhatsApp
-          </MenuItem>
-          <MenuItem onClick={() => handleShareClose("facebook")}>
-            <FacebookIcon sx={{ mr: 1 }} /> Facebook
-          </MenuItem>
-          <MenuItem onClick={() => handleShareClose("twitter")}>
-            <TwitterIcon sx={{ mr: 1 }} /> Twitter
-          </MenuItem>
-          <MenuItem onClick={() => handleShareClose("link")}>
-            <LinkIcon sx={{ mr: 1 }} /> Copy Link
-          </MenuItem>
-        </Menu>
-      </Box>
-
-      {/* PARTICIPANT GRID */}
-      <Grid container spacing={4} justifyContent="center">
-        {loading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <Grid key={i} item xs={12} sm={6} md={4}>
-                <Skeleton variant="rectangular" height={500} sx={{ borderRadius: 3 }} />
-              </Grid>
-            ))
-          : allParticipants?.map((p) => {
-              const voted =
-                guestVotes[p._id] &&
-                Date.now() - guestVotes[p._id] < VOTE_COOLDOWN_MS;
-
-              return (
-                <ParticipantCard
-                  key={p._id}
-                  participant={p}
-                  voted={voted}
-                  onVote={handleVote}
-                />
-              );
-            })}
-      </Grid>
-
-      {/* Load More Button */}
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        {!isReachingEnd && (
-          <Button
-            variant="contained"
-            onClick={() => setSize(size + 1)}
-            disabled={isLoadingMore}
-            sx={{ fontWeight: "bold", px: 4, py: 1.5 }}
+    <Box sx={{ backgroundColor: "var(--gandhi-cream)", minHeight: "85vh", py: 6 }}>
+      <Container>
+        {/* Header Section */}
+        <Box textAlign="center" mb={4}>
+          <div
+            className="d-inline-flex align-items-center gap-2 px-3 py-1 mb-2 rounded-pill"
+            style={{
+              backgroundColor: "var(--gandhi-terracotta-light)",
+              border: "1px solid rgba(216, 90, 42, 0.25)",
+            }}
           >
-            {isLoadingMore ? "Loading..." : "Load More"}
-          </Button>
-        )}
-      </Box>
+            <span style={{ fontSize: "0.85rem", fontWeight: "bold", color: "var(--gandhi-terracotta)" }}>
+              Gandhigiri 2026 Exhibition
+            </span>
+          </div>
+          <Typography
+            variant="h4"
+            align="center"
+            fontWeight="bold"
+            sx={{ color: "var(--gandhi-brown)", letterSpacing: "-0.5px" }}
+          >
+            🏅 Participants of the Event
+          </Typography>
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{ color: "var(--gandhi-text-muted)", maxWidth: 600, mx: "auto", mt: 1 }}
+          >
+            Explore innovative projects submitted by students and cast your vote to recognize excellence
+          </Typography>
+        </Box>
 
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={2500}
-        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
-      >
-        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
-      </Snackbar>
-    </Container>
+        {/* Share Button */}
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+          <Button
+            variant="outlined"
+            startIcon={<ShareIcon />}
+            onClick={handleShareClick}
+            sx={{
+              borderColor: "var(--gandhi-border)",
+              color: "var(--gandhi-brown)",
+              bgcolor: "var(--gandhi-ivory)",
+              borderRadius: "10px",
+              px: 3,
+              fontWeight: 600,
+              textTransform: "none",
+              "&:hover": {
+                borderColor: "var(--gandhi-terracotta)",
+                bgcolor: "var(--gandhi-terracotta-light)",
+                color: "var(--gandhi-terracotta)",
+              },
+            }}
+          >
+            Share Participants
+          </Button>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => handleShareClose(null)}
+            PaperProps={{
+              sx: {
+                borderRadius: "12px",
+                bgcolor: "var(--gandhi-ivory)",
+                border: "1px solid var(--gandhi-border)",
+                boxShadow: "0 6px 20px rgba(56, 34, 19, 0.1)",
+              },
+            }}
+          >
+            <MenuItem onClick={() => handleShareClose("whatsapp")} sx={{ gap: 1.5, py: 1.2 }}>
+              <WhatsAppIcon sx={{ color: "#25D366" }} /> WhatsApp
+            </MenuItem>
+            <MenuItem onClick={() => handleShareClose("facebook")} sx={{ gap: 1.5, py: 1.2 }}>
+              <FacebookIcon sx={{ color: "#1877F2" }} /> Facebook
+            </MenuItem>
+            <MenuItem onClick={() => handleShareClose("twitter")} sx={{ gap: 1.5, py: 1.2 }}>
+              <TwitterIcon sx={{ color: "#1DA1F2" }} /> Twitter
+            </MenuItem>
+            <MenuItem onClick={() => handleShareClose("link")} sx={{ gap: 1.5, py: 1.2 }}>
+              <LinkIcon sx={{ color: "var(--gandhi-terracotta)" }} /> Copy Link
+            </MenuItem>
+          </Menu>
+        </Box>
+
+        {/* PARTICIPANT GRID */}
+        <Grid container spacing={4} justifyContent="center">
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <Grid key={i} item xs={12} sm={6} md={4}>
+                  <Skeleton
+                    variant="rectangular"
+                    height={520}
+                    sx={{ borderRadius: "16px", bgcolor: "var(--gandhi-border-subtle)" }}
+                  />
+                </Grid>
+              ))
+            : allParticipants?.map((p) => {
+                const voted =
+                  guestVotes[p._id] &&
+                  Date.now() - guestVotes[p._id] < VOTE_COOLDOWN_MS;
+
+                return (
+                  <ParticipantCard
+                    key={p._id}
+                    participant={p}
+                    voted={voted}
+                    onVote={handleVote}
+                  />
+                );
+              })}
+        </Grid>
+
+        {/* Load More Button */}
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+          {!isReachingEnd && (
+            <Button
+              variant="contained"
+              onClick={() => setSize(size + 1)}
+              disabled={isLoadingMore}
+              sx={{
+                fontWeight: "bold",
+                px: 5,
+                py: 1.4,
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, var(--gandhi-brown) 0%, var(--gandhi-brown-light) 100%)",
+                color: "#ffffff",
+                boxShadow: "0 4px 14px rgba(56, 34, 19, 0.2)",
+                textTransform: "none",
+                "&:hover": {
+                  background: "linear-gradient(135deg, var(--gandhi-brown-dark) 0%, var(--gandhi-brown) 100%)",
+                },
+              }}
+            >
+              {isLoadingMore ? "Loading..." : "Load More Projects"}
+            </Button>
+          )}
+        </Box>
+
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={2500}
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        >
+          <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+        </Snackbar>
+      </Container>
+    </Box>
   );
 };
 

@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { AuthContext } from "../components/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
 import API_URL from "../api";
-
 
 const Login = () => {
   const navigate = useNavigate();
@@ -38,39 +37,97 @@ const Login = () => {
   };
 
   return (
-    <div className="login-page d-flex align-items-center justify-content-center vh-100">
-      <div className="card login-card shadow p-4">
-        <h2 className="text-center mb-4">Login</h2>
+    <div
+      className="login-page d-flex align-items-center justify-content-center py-5"
+      style={{
+        minHeight: "85vh",
+        backgroundColor: "var(--gandhi-cream)",
+      }}
+    >
+      <div
+        className="card shadow-lg p-4 p-md-5"
+        style={{
+          width: "100%",
+          maxWidth: "440px",
+          backgroundColor: "var(--gandhi-ivory)",
+          border: "1px solid var(--gandhi-border)",
+          borderRadius: "16px",
+        }}
+      >
+        <div className="text-center mb-4">
+          <div
+            className="d-inline-flex align-items-center justify-content-center mb-2"
+            style={{
+              width: "56px",
+              height: "56px",
+              borderRadius: "50%",
+              backgroundColor: "var(--gandhi-terracotta-light)",
+              border: "2px solid rgba(216, 90, 42, 0.25)",
+            }}
+          >
+            <span style={{ fontSize: "1.6rem" }}>🏛️</span>
+          </div>
+          <h2
+            className="fw-bold mb-1"
+            style={{ color: "var(--gandhi-brown)", letterSpacing: "-0.5px" }}
+          >
+            Welcome Back
+          </h2>
+          <p className="small mb-0" style={{ color: "var(--gandhi-text-muted)" }}>
+            Sign in to Gandhigiri 2026 Portal
+          </p>
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
+            <label className="form-label small fw-semibold" style={{ color: "var(--gandhi-brown)" }}>
+              Email Address
+            </label>
             <input
               type="email"
               name="email"
               value={formData.email}
-              placeholder="Email"
+              placeholder="name@aitm.edu.in"
               className="form-control form-control-lg"
               onChange={handleChange}
               required
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-4">
+            <label className="form-label small fw-semibold" style={{ color: "var(--gandhi-brown)" }}>
+              Password
+            </label>
             <input
               type="password"
               name="password"
               value={formData.password}
-              placeholder="Password"
+              placeholder="Enter your password"
               className="form-control form-control-lg"
               onChange={handleChange}
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100 btn-lg" disabled={loading}>
+          <button
+            type="submit"
+            className="btn btn-primary-custom w-100 btn-lg fw-bold"
+            disabled={loading}
+          >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className="text-center mt-3">
-          Don't have an account? connect with admin to be a member
-        </p>
+
+        <div className="text-center mt-4 pt-2 border-top" style={{ borderColor: "var(--gandhi-border)" }}>
+          <p className="small mb-1" style={{ color: "var(--gandhi-text-muted)" }}>
+            Don't have an account? connect with admin to be a member
+          </p>
+          <Link
+            to="/signup"
+            className="small fw-semibold text-decoration-none"
+            style={{ color: "var(--gandhi-terracotta)" }}
+          >
+            Or create a student account
+          </Link>
+        </div>
       </div>
       <ToastContainer position="bottom-left" />
     </div>

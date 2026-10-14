@@ -19,8 +19,9 @@ import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import HomeIcon from "@mui/icons-material/Home";
 import { jwtDecode } from "jwt-decode";
 import API_URL from "../api";
-const sidebarCollapsedWidth = 50;
-const sidebarExpandedWidth = 150;
+
+const sidebarCollapsedWidth = 56;
+const sidebarExpandedWidth = 160;
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ const Signup = () => {
   ];
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", backgroundColor: "var(--gandhi-cream)", minHeight: "85vh" }}>
       {/* Sidebar */}
       <Drawer
         variant="permanent"
@@ -98,20 +99,37 @@ const Signup = () => {
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
             width: sidebarOpen ? sidebarExpandedWidth : sidebarCollapsedWidth,
-            bgcolor: "rgba(255,255,255,0.1)",
-            color: "#000",
-            backdropFilter: "blur(10px)",
+            bgcolor: "var(--gandhi-ivory)",
+            color: "var(--gandhi-brown)",
+            borderRight: "1px solid var(--gandhi-border)",
             overflowX: "hidden",
-            borderRight: "1px solid rgba(0,0,0,0.1)",
-            transition: "width 0.3s",
+            transition: "width 0.3s ease",
+            boxShadow: "2px 0 10px rgba(56, 34, 19, 0.05)",
           },
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 3, mb: 2 }}>
-          <HomeIcon fontSize="large" />
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 3, mb: 1 }}>
+          <Box
+            sx={{
+              p: 1,
+              borderRadius: "50%",
+              bgcolor: "var(--gandhi-terracotta-light)",
+              color: "var(--gandhi-terracotta)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <HomeIcon fontSize="medium" />
+          </Box>
           {sidebarOpen && (
-            <Typography variant="h6" mt={1} fontWeight="bold">
-              Admin Panel
+            <Typography
+              variant="subtitle2"
+              mt={1}
+              fontWeight="bold"
+              sx={{ color: "var(--gandhi-brown)", letterSpacing: "0.5px" }}
+            >
+              Gandhigiri Portal
             </Typography>
           )}
         </Box>
@@ -124,17 +142,22 @@ const Signup = () => {
                 sx={{
                   borderRadius: 2,
                   mx: 1,
-                  transition: "0.3s",
-                  color: "#000",
+                  transition: "0.25s",
+                  color: "var(--gandhi-brown)",
                   "&:hover": {
-                    bgcolor: "rgba(0,0,0,0.05)",
-                    transform: "scale(1.05)",
-                    color: "#1976d2",
+                    bgcolor: "var(--gandhi-terracotta-light)",
+                    transform: "translateX(2px)",
+                    color: "var(--gandhi-terracotta)",
                   },
                 }}
               >
                 {item.icon}
-                {sidebarOpen && <ListItemText primary={item.text} sx={{ ml: 2 }} />}
+                {sidebarOpen && (
+                  <ListItemText
+                    primary={item.text}
+                    sx={{ ml: 2, "& .MuiTypography-root": { fontWeight: 600, fontSize: "0.9rem" } }}
+                  />
+                )}
               </ListItemButton>
             </ListItem>
           ))}
@@ -144,56 +167,110 @@ const Signup = () => {
       {/* Main Content */}
       <Box
         sx={{
-          ml: sidebarCollapsedWidth,
+          ml: `${sidebarCollapsedWidth}px`,
           width: `calc(100% - ${sidebarCollapsedWidth}px)`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: "100vh",
+          py: 6,
+          px: 2,
         }}
       >
-        <div className="signup-card shadow p-4" style={{ width: 400 }}>
-          <h2 className="text-center mb-4">Create Account</h2>
+        <div
+          className="signup-card shadow-lg p-4 p-md-5"
+          style={{
+            width: "100%",
+            maxWidth: "460px",
+            backgroundColor: "var(--gandhi-ivory)",
+            border: "1px solid var(--gandhi-border)",
+            borderRadius: "16px",
+          }}
+        >
+          <div className="text-center mb-4">
+            <div
+              className="d-inline-flex align-items-center justify-content-center mb-2"
+              style={{
+                width: "56px",
+                height: "56px",
+                borderRadius: "50%",
+                backgroundColor: "var(--gandhi-terracotta-light)",
+                border: "2px solid rgba(216, 90, 42, 0.25)",
+              }}
+            >
+              <span style={{ fontSize: "1.6rem" }}>✨</span>
+            </div>
+            <h2
+              className="fw-bold mb-1"
+              style={{ color: "var(--gandhi-brown)", letterSpacing: "-0.5px" }}
+            >
+              Create Account
+            </h2>
+            <p className="small mb-0" style={{ color: "var(--gandhi-text-muted)" }}>
+              Join Gandhigiri 2026 Student Voting & Project Portal
+            </p>
+          </div>
+
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
+              <label className="form-label small fw-semibold" style={{ color: "var(--gandhi-brown)" }}>
+                Full Name
+              </label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
-                placeholder="Full Name"
+                placeholder="Enter your full name"
                 className="form-control form-control-lg"
                 onChange={handleChange}
                 required
               />
             </div>
             <div className="mb-3">
+              <label className="form-label small fw-semibold" style={{ color: "var(--gandhi-brown)" }}>
+                College Email
+              </label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
-                placeholder="Email"
+                placeholder="student@aitm.edu.in"
                 className="form-control form-control-lg"
                 onChange={handleChange}
                 required
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
+              <label className="form-label small fw-semibold" style={{ color: "var(--gandhi-brown)" }}>
+                Password
+              </label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
-                placeholder="Password"
+                placeholder="Minimum 6 characters"
                 className="form-control form-control-lg"
                 onChange={handleChange}
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary w-100 btn-lg" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn-primary-custom w-100 btn-lg fw-bold"
+              disabled={loading}
+            >
               {loading ? "Signing up..." : "Signup"}
             </button>
           </form>
-          <p className="text-center mt-3">
-            Already have an account? <Link to="/login">Login</Link>
+
+          <p className="text-center mt-4 mb-0 small" style={{ color: "var(--gandhi-text-muted)" }}>
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="fw-semibold text-decoration-none"
+              style={{ color: "var(--gandhi-terracotta)" }}
+            >
+              Login
+            </Link>
           </p>
         </div>
         <ToastContainer position="bottom-left" />

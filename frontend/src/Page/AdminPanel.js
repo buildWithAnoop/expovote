@@ -32,14 +32,16 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import HomeIcon from "@mui/icons-material/Home";
+import HowToVoteIcon from "@mui/icons-material/HowToVote";
+import StopCircleIcon from "@mui/icons-material/StopCircle";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
 import { motion } from "framer-motion";
 import API_URL from "../api";
 
-const sidebarCollapsedWidth = 60;
-const sidebarExpandedWidth = 180;
+const sidebarCollapsedWidth = 56;
+const sidebarExpandedWidth = 160;
 
 const AdminPanel = () => {
   const [participants, setParticipants] = useState([]);
@@ -62,10 +64,10 @@ const AdminPanel = () => {
   }
 
   // Voting control window state
-  const [votingStatus, setVotingStatus] = useState(null); // boolean | null
+  const [votingStatus, setVotingStatus] = useState(null);
   const [votingLoading, setVotingLoading] = useState(false);
   const [votingActionInProgress, setVotingActionInProgress] = useState(false);
-  const [votingMessage, setVotingMessage] = useState(null); // { type: 'success' | 'error', text: string } | null
+  const [votingMessage, setVotingMessage] = useState(null);
   const [votingConfirmDialog, setVotingConfirmDialog] = useState({ open: false, action: null });
 
   // Pagination state (default limit 50 aligned with backend max limit)
@@ -123,7 +125,6 @@ const AdminPanel = () => {
         type: "success",
         text: data.message || `Voting ${action === "start" ? "started" : "stopped"} successfully!`,
       });
-      // Refresh status from backend rather than trusting only local state
       await fetchVotingStatus();
     } catch (err) {
       console.error(`Error during ${action} voting:`, err);
@@ -249,7 +250,7 @@ const AdminPanel = () => {
   ];
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", backgroundColor: "var(--gandhi-cream)", minHeight: "85vh" }}>
       {/* Sidebar */}
       <Drawer
         variant="permanent"
@@ -258,30 +259,39 @@ const AdminPanel = () => {
         sx={{
           width: sidebarOpen ? sidebarExpandedWidth : sidebarCollapsedWidth,
           flexShrink: 0,
-          transition: "width 0.3s",
+          transition: "width 0.3s ease",
           [`& .MuiDrawer-paper`]: {
             width: sidebarOpen ? sidebarExpandedWidth : sidebarCollapsedWidth,
-            transition: "width 0.3s",
-            bgcolor: "#ffffffdd",
-            color: "#000",
-            backdropFilter: "blur(10px)",
+            transition: "width 0.3s ease",
+            bgcolor: "var(--gandhi-ivory)",
+            color: "var(--gandhi-brown)",
+            borderRight: "1px solid var(--gandhi-border)",
             overflowX: "hidden",
-            borderRight: "1px solid rgba(0,0,0,0.1)",
+            boxShadow: "2px 0 10px rgba(56, 34, 19, 0.05)",
           },
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            py: 3,
-            mb: 2,
-          }}
-        >
-          <HomeIcon fontSize="large" />
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 3, mb: 1 }}>
+          <Box
+            sx={{
+              p: 1,
+              borderRadius: "50%",
+              bgcolor: "var(--gandhi-terracotta-light)",
+              color: "var(--gandhi-terracotta)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <HomeIcon fontSize="medium" />
+          </Box>
           {sidebarOpen && (
-            <Typography variant="h6" mt={1} fontWeight="bold">
+            <Typography
+              variant="subtitle2"
+              mt={1}
+              fontWeight="bold"
+              sx={{ color: "var(--gandhi-brown)", letterSpacing: "0.5px" }}
+            >
               Admin Panel
             </Typography>
           )}
@@ -300,17 +310,22 @@ const AdminPanel = () => {
                   sx={{
                     borderRadius: 2,
                     mx: 1,
-                    transition: "0.3s",
-                    color: "#000",
+                    transition: "0.25s",
+                    color: "var(--gandhi-brown)",
                     "&:hover": {
-                      bgcolor: "rgba(0,0,0,0.05)",
-                      transform: "scale(1.05)",
-                      color: "#1976d2",
+                      bgcolor: "var(--gandhi-terracotta-light)",
+                      transform: "translateX(2px)",
+                      color: "var(--gandhi-terracotta)",
                     },
                   }}
                 >
                   {item.icon}
-                  {sidebarOpen && <ListItemText primary={item.text} sx={{ ml: 2 }} />}
+                  {sidebarOpen && (
+                    <ListItemText
+                      primary={item.text}
+                      sx={{ ml: 2, "& .MuiTypography-root": { fontWeight: 600, fontSize: "0.9rem" } }}
+                    />
+                  )}
                 </ListItemButton>
               </ListItem>
             </Tooltip>
@@ -321,10 +336,10 @@ const AdminPanel = () => {
       {/* Main Content */}
       <Container
         sx={{
-          py: 4,
-          ml: sidebarOpen ? sidebarExpandedWidth : sidebarCollapsedWidth,
+          py: 5,
+          ml: sidebarOpen ? `${sidebarExpandedWidth}px` : `${sidebarCollapsedWidth}px`,
           width: `calc(100% - ${sidebarOpen ? sidebarExpandedWidth : sidebarCollapsedWidth}px)`,
-          transition: "margin-left 0.3s, width 0.3s",
+          transition: "margin-left 0.3s ease, width 0.3s ease",
         }}
       >
         {/* Admin Voting Window Controls (Only visible to authenticated administrators) */}
@@ -332,12 +347,12 @@ const AdminPanel = () => {
           <Paper
             elevation={3}
             sx={{
-              p: 3,
+              p: 3.5,
               mb: 4,
-              borderRadius: 3,
-              bgcolor: "#ffffffdd",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(0,0,0,0.08)",
+              borderRadius: "16px",
+              bgcolor: "var(--gandhi-ivory)",
+              border: "1px solid var(--gandhi-border)",
+              boxShadow: "0 6px 20px rgba(56, 34, 19, 0.06)",
             }}
             aria-label="voting-control-panel"
           >
@@ -351,17 +366,32 @@ const AdminPanel = () => {
               }}
             >
               <Box>
-                <Typography variant="h6" fontWeight="bold">
+                <div
+                  className="d-inline-flex align-items-center gap-2 px-2.5 py-0.5 mb-1.5 rounded-pill"
+                  style={{
+                    backgroundColor: "var(--gandhi-terracotta-light)",
+                    border: "1px solid rgba(216, 90, 42, 0.25)",
+                  }}
+                >
+                  <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "var(--gandhi-terracotta)" }}>
+                    Admin Window Controls &bull; Gandhigiri 2026
+                  </span>
+                </div>
+                <Typography
+                  variant="h6"
+                  fontWeight="bold"
+                  sx={{ color: "var(--gandhi-brown)", letterSpacing: "-0.3px" }}
+                >
                   Voting Window Controls
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 1 }}>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ color: "var(--gandhi-text-muted)" }}>
                     Current Status:
                   </Typography>
                   {votingLoading && votingStatus === null ? (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <CircularProgress size={16} />
-                      <Typography variant="body2" color="text.secondary">
+                      <CircularProgress size={16} sx={{ color: "var(--gandhi-terracotta)" }} />
+                      <Typography variant="body2" sx={{ color: "var(--gandhi-text-muted)" }}>
                         Checking status...
                       </Typography>
                     </Box>
@@ -370,7 +400,8 @@ const AdminPanel = () => {
                       label="VOTING OPEN"
                       color="success"
                       size="small"
-                      sx={{ fontWeight: "bold", px: 1 }}
+                      icon={<HowToVoteIcon fontSize="small" />}
+                      sx={{ fontWeight: "bold", px: 1, borderRadius: "6px" }}
                       aria-label="voting-status-open"
                     />
                   ) : (
@@ -378,7 +409,7 @@ const AdminPanel = () => {
                       label="VOTING CLOSED"
                       color="error"
                       size="small"
-                      sx={{ fontWeight: "bold", px: 1 }}
+                      sx={{ fontWeight: "bold", px: 1, borderRadius: "6px" }}
                       aria-label="voting-status-closed"
                     />
                   )}
@@ -389,25 +420,37 @@ const AdminPanel = () => {
                 <Button
                   variant="contained"
                   color="success"
+                  startIcon={<PlayCircleIcon />}
                   disabled={votingLoading || votingActionInProgress || votingStatus === true}
                   onClick={() => setVotingConfirmDialog({ open: true, action: "start" })}
                   aria-label="start-voting-button"
-                  sx={{ textTransform: "none", fontWeight: "bold" }}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    borderRadius: "8px",
+                    px: 2.5,
+                  }}
                 >
                   Start Voting
                 </Button>
                 <Button
                   variant="contained"
                   color="error"
+                  startIcon={<StopCircleIcon />}
                   disabled={votingLoading || votingActionInProgress || votingStatus === false}
                   onClick={() => setVotingConfirmDialog({ open: true, action: "stop" })}
                   aria-label="stop-voting-button"
-                  sx={{ textTransform: "none", fontWeight: "bold" }}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    borderRadius: "8px",
+                    px: 2.5,
+                  }}
                 >
                   Stop Voting
                 </Button>
                 {votingActionInProgress && (
-                  <CircularProgress size={24} aria-label="voting-action-spinner" />
+                  <CircularProgress size={24} aria-label="voting-action-spinner" sx={{ color: "var(--gandhi-terracotta)" }} />
                 )}
               </Stack>
             </Box>
@@ -415,7 +458,7 @@ const AdminPanel = () => {
             {votingMessage && (
               <Alert
                 severity={votingMessage.type}
-                sx={{ mt: 2 }}
+                sx={{ mt: 2.5, borderRadius: "10px" }}
                 onClose={() => setVotingMessage(null)}
                 aria-label="voting-message-alert"
               >
@@ -434,11 +477,12 @@ const AdminPanel = () => {
             onChange={(e) => setSearch(e.target.value)}
             sx={{
               width: "100%",
-              maxWidth: 400,
+              maxWidth: 440,
               "& .MuiOutlinedInput-root": {
-                borderRadius: 3,
-                bgcolor: "rgba(0,0,0,0.05)",
-                "&:hover": { bgcolor: "rgba(0,0,0,0.1)" },
+                borderRadius: "12px",
+                bgcolor: "var(--gandhi-ivory)",
+                border: "1px solid var(--gandhi-border)",
+                "&.Mui-focused fieldset": { borderColor: "var(--gandhi-terracotta)" },
               },
             }}
           />
@@ -447,34 +491,50 @@ const AdminPanel = () => {
         {/* Participants */}
         {loading ? (
           <Box textAlign="center" mt={10}>
-            <CircularProgress />
+            <CircularProgress sx={{ color: "var(--gandhi-terracotta)" }} />
           </Box>
         ) : error ? (
           <Box textAlign="center" mt={4} mb={4}>
-            <Alert severity="error" sx={{ maxWidth: 500, mx: "auto", mb: 2 }}>
+            <Alert severity="error" sx={{ maxWidth: 500, mx: "auto", mb: 2, borderRadius: "10px" }}>
               {error}
             </Alert>
-            <Button variant="contained" onClick={() => fetchParticipants(page)}>
+            <Button
+              variant="contained"
+              onClick={() => fetchParticipants(page)}
+              sx={{
+                bgcolor: "var(--gandhi-terracotta)",
+                borderRadius: "8px",
+                "&:hover": { bgcolor: "var(--gandhi-terracotta-hover)" },
+              }}
+            >
               Retry
             </Button>
           </Box>
         ) : (
           <>
             {filteredParticipants.length === 0 ? (
-              <Box textAlign="center" mt={6} p={4} bgcolor="rgba(0,0,0,0.02)" borderRadius={3}>
-                <Typography variant="h6" color="text.secondary">
+              <Box
+                textAlign="center"
+                mt={6}
+                p={5}
+                bgcolor="var(--gandhi-ivory)"
+                borderRadius="16px"
+                border="1px solid var(--gandhi-border)"
+                boxShadow="0 4px 12px rgba(56, 34, 19, 0.05)"
+              >
+                <Typography variant="h6" sx={{ color: "var(--gandhi-text-muted)" }}>
                   {search ? "No participants match your search criteria." : "No participants found."}
                 </Typography>
               </Box>
             ) : (
-              <Grid container spacing={2}>
+              <Grid container spacing={2.5}>
                 {filteredParticipants.map((participant, index) => (
                   <Grid item xs={12} sm={6} md={4} key={participant._id}>
                     <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      initial={{ opacity: 0, y: 20 }}
+                      whileHover={{ scale: 1.03 }}
+                      initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      transition={{ duration: 0.25, delay: index * 0.03 }}
                     >
                       <Box
                         sx={{
@@ -482,49 +542,65 @@ const AdminPanel = () => {
                           flexDirection: "column",
                           alignItems: "center",
                           p: 3,
-                          borderRadius: 3,
-                          boxShadow: 4,
-                          bgcolor: "#ffffffdd",
-                          backdropFilter: "blur(8px)",
-                          border: "1px solid rgba(0,0,0,0.1)",
-                          transition: "0.3s",
+                          borderRadius: "14px",
+                          bgcolor: "var(--gandhi-ivory)",
+                          border: "1px solid var(--gandhi-border)",
+                          boxShadow: "0 4px 14px rgba(56, 34, 19, 0.06)",
+                          transition: "0.25s",
                           "&:hover": {
-                            transform: "translateY(-5px)",
-                            boxShadow: 10,
-                            borderColor: "rgba(0,0,0,0.2)",
+                            transform: "translateY(-4px)",
+                            boxShadow: "0 10px 24px rgba(56, 34, 19, 0.12)",
+                            borderColor: "rgba(216, 90, 42, 0.3)",
                           },
                         }}
                       >
                         <Avatar
                           alt={participant.name}
                           src={participant.image}
-                          sx={{ width: 70, height: 70, mb: 2 }}
+                          sx={{
+                            width: 72,
+                            height: 72,
+                            mb: 2,
+                            border: "2px solid var(--gandhi-border)",
+                          }}
                         />
-                        <Typography variant="h6" fontWeight="bold" align="center">
+                        <Typography
+                          variant="h6"
+                          fontWeight="bold"
+                          align="center"
+                          sx={{ color: "var(--gandhi-brown)", fontSize: "1.05rem", lineHeight: 1.3 }}
+                        >
                           {participant.name}
                         </Typography>
                         <Typography
                           variant="body2"
-                          color="text.secondary"
+                          sx={{ color: "var(--gandhi-text-muted)", fontSize: "0.82rem" }}
                           align="center"
-                          mb={1}
+                          mb={1.5}
                         >
                           {participant.email}
                         </Typography>
                         <Chip
                           label={participant.department || participant.projectName || "General"}
-                          color="primary"
                           size="small"
                           sx={{
-                            mb: 1,
-                            "&:hover": { transform: "scale(1.1)", transition: "0.3s" },
+                            mb: 1.5,
+                            bgcolor: "var(--gandhi-terracotta-light)",
+                            color: "var(--gandhi-terracotta)",
+                            fontWeight: "600",
+                            border: "1px solid rgba(216, 90, 42, 0.2)",
+                            borderRadius: "6px",
                           }}
                         />
                         {/* Team Number */}
                         {participant.teamNo && (
                           <Typography
                             variant="body2"
-                            color="secondary.main"
+                            sx={{
+                              color: "var(--gandhi-gold-hover)",
+                              fontWeight: "bold",
+                              fontSize: "0.82rem",
+                            }}
                             align="center"
                             mb={2}
                           >
@@ -537,8 +613,12 @@ const AdminPanel = () => {
                           onClick={() =>
                             setDeleteDialog({ open: true, id: participant._id })
                           }
+                          sx={{
+                            bgcolor: "rgba(211, 47, 47, 0.08)",
+                            "&:hover": { bgcolor: "rgba(211, 47, 47, 0.18)" },
+                          }}
                         >
-                          <DeleteIcon />
+                          <DeleteIcon fontSize="small" />
                         </IconButton>
                       </Box>
                     </motion.div>
@@ -549,8 +629,21 @@ const AdminPanel = () => {
 
             {/* Pagination Controls */}
             {total > 0 && (
-              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4, mb: 2 }}>
-                <Typography variant="body2" color="text.secondary" mb={1} aria-label="pagination-info">
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  mt: 5,
+                  mb: 2,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{ color: "var(--gandhi-text-muted)" }}
+                  mb={1.5}
+                  aria-label="pagination-info"
+                >
                   Showing {participants.length ? (page - 1) * limit + 1 : 0} -{" "}
                   {Math.min(page * limit, total)} of {total} projects (Page {page} of {totalPages})
                 </Typography>
@@ -563,6 +656,16 @@ const AdminPanel = () => {
                   showLastButton
                   disabled={loading}
                   aria-label="admin-pagination"
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "var(--gandhi-brown)",
+                      "&.Mui-selected": {
+                        backgroundColor: "var(--gandhi-terracotta)",
+                        color: "#ffffff",
+                        "&:hover": { backgroundColor: "var(--gandhi-terracotta-hover)" },
+                      },
+                    },
+                  }}
                 />
               </Box>
             )}
@@ -573,18 +676,29 @@ const AdminPanel = () => {
         <Dialog
           open={deleteDialog.open}
           onClose={() => setDeleteDialog({ open: false, id: null })}
+          PaperProps={{
+            sx: {
+              borderRadius: "14px",
+              p: 1,
+              bgcolor: "var(--gandhi-ivory)",
+            },
+          }}
         >
-          <DialogTitle>
+          <DialogTitle sx={{ color: "var(--gandhi-brown)", fontWeight: "bold" }}>
             Are you sure you want to delete this participant?
           </DialogTitle>
-          <DialogActions>
-            <Button onClick={() => setDeleteDialog({ open: false, id: null })}>
+          <DialogActions sx={{ pb: 2, px: 3 }}>
+            <Button
+              onClick={() => setDeleteDialog({ open: false, id: null })}
+              sx={{ color: "var(--gandhi-brown)", textTransform: "none", fontWeight: 600 }}
+            >
               Cancel
             </Button>
             <Button
               color="error"
               variant="contained"
               onClick={() => handleDelete(deleteDialog.id)}
+              sx={{ borderRadius: "8px", textTransform: "none", fontWeight: "bold" }}
             >
               Delete
             </Button>
@@ -597,21 +711,29 @@ const AdminPanel = () => {
           onClose={() =>
             !votingActionInProgress && setVotingConfirmDialog({ open: false, action: null })
           }
+          PaperProps={{
+            sx: {
+              borderRadius: "14px",
+              p: 1,
+              bgcolor: "var(--gandhi-ivory)",
+            },
+          }}
         >
-          <DialogTitle>
+          <DialogTitle sx={{ color: "var(--gandhi-brown)", fontWeight: "bold" }}>
             {votingConfirmDialog.action === "start" ? "Confirm Start Voting" : "Confirm Stop Voting"}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText>
+            <DialogContentText sx={{ color: "var(--gandhi-text-muted)" }}>
               {votingConfirmDialog.action === "start"
                 ? "Are you sure you want to OPEN voting? Authenticated students will immediately be able to cast votes for participants."
                 : "Are you sure you want to CLOSE voting? Students will no longer be able to submit new votes. All existing votes and ledger records will be preserved safely."}
             </DialogContentText>
           </DialogContent>
-          <DialogActions>
+          <DialogActions sx={{ pb: 2, px: 3 }}>
             <Button
               onClick={() => setVotingConfirmDialog({ open: false, action: null })}
               disabled={votingActionInProgress}
+              sx={{ color: "var(--gandhi-brown)", textTransform: "none", fontWeight: 600 }}
             >
               Cancel
             </Button>
@@ -621,6 +743,7 @@ const AdminPanel = () => {
               onClick={() => handleVotingAction(votingConfirmDialog.action)}
               disabled={votingActionInProgress}
               autoFocus
+              sx={{ borderRadius: "8px", textTransform: "none", fontWeight: "bold" }}
             >
               {votingConfirmDialog.action === "start" ? "Open Voting" : "Close Voting"}
             </Button>
